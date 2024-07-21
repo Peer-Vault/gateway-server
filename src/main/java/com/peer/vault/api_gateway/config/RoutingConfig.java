@@ -20,6 +20,10 @@ public class RoutingConfig {
                         .path("/user/**")
                         .filters(f -> f.filter(authenticationFilter.apply(new AuthenticationFilter.Config())))
                         .uri("lb://USERSERVICE"))
+                .route(p -> p
+                        .path("/notifications/**")
+                        .filters(f -> f.filter(authenticationFilter.apply(new AuthenticationFilter.Config())))
+                        .uri("lb://NOTIFICATIONSERVICE"))
                 .build();
     }
 
