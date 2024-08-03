@@ -3,3 +3,17 @@ spring:
     name: "gatewayserver"
   config:
     import: optional:configserver:http://localhost:8071/
+
+#  cloud:
+#    gateway:
+#      globalcors:
+#        cors-configurations:
+#          '[/**]':
+#            allowedOrigins: "http://localhost:3000"
+#            allowedMethods:
+#              - GET
+#              - POST
+#              - PUT
+#              - DELETE
+#            allowedHeaders:
+#              - "*"
