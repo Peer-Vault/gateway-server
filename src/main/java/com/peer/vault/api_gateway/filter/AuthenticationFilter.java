@@ -24,25 +24,32 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
 
     @Override
     public GatewayFilter apply(Config config) {
-        return ((exchange, chain) -> {
-            if (validator.isSecured.test(exchange.getRequest())) {
-                //header contains token or not
+        return (exchange, chain) -> {
+            boolean isSecuredRequest = validator.isSecured.test(exchange.getRequest());
+
+            // Logging for debugging
+            System.out.println("Is Secured Request: " + isSecuredRequest);
+            System.out.println("Request Path: " + exchange.getRequest().getURI().getPath());
+
+            if (isSecuredRequest) {
+                // Check if the header contains a token
                 if (!exchange.getRequest().getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
-                    throw new RuntimeException("missing authorization header");
+                    throw new RuntimeException("Missing authorization header");
                 }
 
-                String authHeader = exchange.getRequest().getHeaders().get(HttpHeaders.AUTHORIZATION).get(0);
+                String authHeader = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
                 if (authHeader != null && authHeader.startsWith("Bearer ")) {
                     authHeader = authHeader.substring(7);
                 }
+
                 try {
                     jwtUtil.validateToken(authHeader);
                 } catch (Exception e) {
-                    throw new RuntimeException("un authorized access to application");
+                    throw new RuntimeException("Unauthorized access to application", e);
                 }
             }
             return chain.filter(exchange);
-        });
+        };
     }
 
 
