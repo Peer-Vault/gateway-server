@@ -13,6 +13,9 @@ public class RoutingConfig {
     public RouteLocator peerVaultConfig(RouteLocatorBuilder routeLocatorBuilder, AuthenticationFilter authenticationFilter) {
         return routeLocatorBuilder.routes()
                 .route(p -> p
+                        .path("/file/download/shared/**") // Specific route for public access
+                        .uri("lb://FILESERVICE"))
+                .route(p -> p
                         .path("/file/**")
                         .filters(f -> f.filter(authenticationFilter.apply(new AuthenticationFilter.Config())))
                         .uri("lb://FILESERVICE"))
